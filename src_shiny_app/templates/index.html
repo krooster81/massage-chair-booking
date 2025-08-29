@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Massage Chair Booking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Massage Chair Booking</h1>
+        
+        <!-- Date picker -->
+        <form action="{{ url_for('index') }}" method="get">
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" value="{{ date }}" min="{{ date }}">
+            <button type="submit">View Times</button>
+        </form>
+        
+        <!-- Booking form -->
+        <form action="{{ url_for('index') }}" method="post">
+            <input type="hidden" name="date" value="{{ date }}">
+            <label for="time">Available Times:</label>
+            <select name="time" id="time">
+                {% if available_slots %}
+                    {% for slot in available_slots %}
+                        <option value="{{ slot }}">{{ slot }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option disabled>No available slots</option>
+                {% endif %}
+            </select>
+            <label for="name">Your Name:</label>
+            <input type="text" name="name" id="name" required>
+            <label for="email">Your Email:</label>
+            <input type="email" name="email" id="email" required>
+            <button type="submit">Book Now</button>
+        </form>
+        
+        <!-- Booked slots display -->
+        <h3>Booked Slots for {{ date }}</h3>
+        {% if booked_slots %}
+            <ul>
+                {% for slot in booked_slots %}
+                    <li>{{ slot }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No bookings for this date.</p>
+        {% endif %}
+        
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+</body>
+</html>
